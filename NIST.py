@@ -10,7 +10,7 @@ Feel free to add interpolations for other metals not yet included in this functi
 """
 
 
-def lambdaNIST(T,RRR,Material): 
+def NIST_Lambda(T,RRR,Material): 
     """function returning thermal conductivity of Material as a function of temperature and RRR (if applicable). Curves taken from the  NIST database
     
         :T:     Temperature [K]
@@ -228,3 +228,55 @@ def lambdaNIST(T,RRR,Material):
         
         case _:
             raise ValueError("Unknown material please check spelling or add it to this function.")
+
+def NIST_Specific_Heat(T,RRR,Material): 
+    """function returning specific heat of Material as a function of temperature. Curves taken from the  NIST database
+        Data to be added 
+    
+        :T:     Temperature [K]
+        :Material: String to identify material can be[Al; Cu; Fe; W; 304; 316; G-10N; G-10W; Kapton; Brass;Mylar;P-Bronze]
+    """
+    import numpy as np
+    import warnings
+    
+    match Material.lower():
+        case "304":
+                #note 304L has the same coefficients
+                if any(T>300) or any(T<4):
+                    warnings.warn("Temperature outside range of validity: 4<T<300")
+                a= 22.0061
+                b= -127.5528
+                c= 303.647
+                d= -381.0098
+                e= 274.0328
+                f= -112.9212
+                g= 24.7593
+                h= -2.239153
+                i= 0 
+                Cv_304 =10**(a+b*(np.log10(T)) + c*(np.log10(T))**2 + d*(np.log10(T))**3 + e*(np.log10(T))**4 + f*(np.log10(T))**5 + g*(np.log10(T))**6 + h*(np.log10(T))**7 + i*(np.log10(T))**8 )
+                return Cv_304
+            case "316":
+                if any(T>300) or any(T<4):
+                    warnings.warn("Temperature outside range of validity: 4<T<300")
+                if T>50: 
+                    a=-1879.464
+                    b= 3643.198
+                    c= 76.70125
+                    d= -6176.028
+                    e= 7437.6247
+                    f= -4305.7217
+                    g= 1382.4627
+                    h= -237.22704
+                    i= 17.05262
+                else:
+                    a= 12.2486
+                    b= -80.6422
+                    c= 218.743
+                    d= -308.854
+                    e= 239.5296
+                    f= -89.9982
+                    g= 3.15315 
+                    h= 8.44996
+                    i= -1.91368 
+                Cv_316 =10**(a+b*(np.log10(T)) + c*(np.log10(T))**2 + d*(np.log10(T))**3 + e*(np.log10(T))**4 + f*(np.log10(T))**5 + g*(np.log10(T))**6 + h*(np.log10(T))**7 + i*(np.log10(T))**8 )
+                return Cv_316
